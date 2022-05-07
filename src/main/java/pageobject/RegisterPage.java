@@ -37,10 +37,6 @@ public class RegisterPage {
     @FindBy(how = How.XPATH, using = "//p[text()='Некорректный пароль']")
     private SelenideElement incorrectPasswordErrorMessage;
 
-//    //collection selectors list of rental period
-//    @FindBy(how = How.XPATH, using = "//*[contains(@class, 'Dropdown-root')]//*[@role='option']")
-//    private ElementsCollection listOfRentalPeriod;
-
     public RegisterPage fillNameInput(String name) {
         nameInput.sendKeys(name);
         return this;
