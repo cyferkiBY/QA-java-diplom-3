@@ -21,7 +21,7 @@ public class RegisterPage {
     @FindBy(how = How.XPATH, using = "//input[@name='Пароль']")
     private SelenideElement passwordInput;
 
-    //selector field password
+    //selector button registration
     @FindBy(how = How.XPATH, using = "//button[text()='Зарегистрироваться']")
     private SelenideElement registerButton;
 
@@ -53,7 +53,7 @@ public class RegisterPage {
     }
 
     public RegisterPage clickRegisterButton() {
-        registerButton.click();
+        registerButton.shouldBe(visible).click();
         return this;
     }
 
@@ -66,8 +66,8 @@ public class RegisterPage {
     }
 
     //для ожидание перехода со страницы
-    public SelenideElement registrationHeaderDisappear() {
-        return registrationHeader.should(disappear);
+    public RegisterPage registrationHeaderDisappear() {
+        registrationHeader.should(disappear);
+        return this;
     }
-
 }

@@ -9,12 +9,12 @@ import static com.codeborne.selenide.Selenide.*;
 import static org.junit.Assert.*;
 
 public class RegisterTest extends BaseTest{
-    final String EXPECTED_URL = LoginPage.URL;
+    private final static String EXPECTED_URL = LoginPage.URL;
+    private final Faker fakerRu = new Faker(new Locale("ru-RU"));
+    private final Faker fakerEn = new Faker(new Locale("en-GB"));
 
     @Test
     public void checkNewUserRegistrationWithValidData() {
-        Faker fakerRu = new Faker(new Locale("ru-RU"));
-        Faker fakerEn = new Faker(new Locale("en-GB"));
         int minSizePassword = 6;
         int maxSizePassword = 20;
 
@@ -26,13 +26,11 @@ public class RegisterTest extends BaseTest{
                 .registrationHeaderDisappear();
 
         String currentURL = webdriver().driver().url();
-        assertEquals(currentURL, EXPECTED_URL);
+        assertEquals(EXPECTED_URL, currentURL);
     }
 
     @Test
     public void checkUserIsNotRegisteredWithRepeatedEmail() {
-        Faker fakerRu = new Faker(new Locale("ru-RU"));
-        Faker fakerEn = new Faker(new Locale("en-GB"));
         int minSizePassword = 6;
         int maxSizePassword = 20;
 
@@ -43,7 +41,8 @@ public class RegisterTest extends BaseTest{
                 .fillPasswordInput(fakerEn.internet().password(minSizePassword,maxSizePassword))
                 .clickRegisterButton();
 
-        boolean isUserAlreadyExistErrorMessageDisplayed = open(RegisterPage.URL, RegisterPage.class)
+        boolean isUserAlreadyExistErrorMessageDisplayed =
+                open(RegisterPage.URL, RegisterPage.class)
                 .fillNameInput(fakerRu.name().fullName())
                 .fillEmailInput(emailAddress)
                 .fillPasswordInput(fakerEn.internet().password(minSizePassword,maxSizePassword))
@@ -55,8 +54,6 @@ public class RegisterTest extends BaseTest{
 
     @Test
     public void checkNewUserNotRegistrationWithoutEmail() {
-        Faker fakerRu = new Faker(new Locale("ru-RU"));
-        Faker fakerEn = new Faker(new Locale("en-GB"));
         int minSizePassword = 6;
         int maxSizePassword = 20;
 
@@ -65,14 +62,14 @@ public class RegisterTest extends BaseTest{
                 .fillEmailInput("")
                 .fillPasswordInput(fakerEn.internet().password(minSizePassword,maxSizePassword))
                 .clickRegisterButton();
+        sleep(1000);
 
         String currentURL = webdriver().driver().url();
-        assertEquals(currentURL, RegisterPage.URL);
+        assertEquals(RegisterPage.URL, currentURL);
     }
 
     @Test
     public void checkNewUserNotRegistrationWithoutName() {
-        Faker fakerEn = new Faker(new Locale("en-GB"));
         int minSizePassword = 6;
         int maxSizePassword = 20;
 
@@ -81,30 +78,27 @@ public class RegisterTest extends BaseTest{
                 .fillEmailInput(fakerEn.internet().emailAddress())
                 .fillPasswordInput(fakerEn.internet().password(minSizePassword,maxSizePassword))
                 .clickRegisterButton();
+        sleep(1000);
 
         String currentURL = webdriver().driver().url();
-        assertEquals(currentURL, RegisterPage.URL);
+        assertEquals(RegisterPage.URL, currentURL);
     }
 
     @Test
     public void checkNewUserNotRegistrationWithoutPassword() {
-        Faker fakerRu = new Faker(new Locale("ru-RU"));
-        Faker fakerEn = new Faker(new Locale("en-GB"));
-
         open(RegisterPage.URL, RegisterPage.class)
                 .fillNameInput(fakerRu.name().fullName())
                 .fillEmailInput(fakerEn.internet().emailAddress())
                 .fillPasswordInput("")
                 .clickRegisterButton();
+        sleep(1000);
 
         String currentURL = webdriver().driver().url();
-        assertEquals(currentURL, RegisterPage.URL);
+        assertEquals(RegisterPage.URL, currentURL);
     }
 
     @Test
     public void checkNewUserNotRegistrationWithTooShortPassword() {
-        Faker fakerRu = new Faker(new Locale("ru-RU"));
-        Faker fakerEn = new Faker(new Locale("en-GB"));
         int minSizePassword = 1;
         int maxSizePassword = 6;
 
