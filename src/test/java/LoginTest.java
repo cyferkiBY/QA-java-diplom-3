@@ -52,13 +52,16 @@ public class LoginTest extends BaseTest {
     }
 
     @After
-    @DisplayName("Navigate to Profile and logout, clear cookies")
+    @DisplayName("Navigate to Profile and logout, delete user, clear cookies")
     public void cleanDate() {
         page(HeaderPage.class).clickHeaderAccountButton();
         page(ProfilePage.class)
                 .profilePageLoaded()
                 .clickLogoutButton()
                 .profilePageDisappear();
+        if (validUserData != null) {
+            validUserData.deleteUserUsingAPI();
+        }
         clearBrowserCookies();
         clearBrowserLocalStorage();
     }
@@ -69,7 +72,6 @@ public class LoginTest extends BaseTest {
                 .fillPasswordInput(validUserData.getPassword())
                 .clickLoginButton()
                 .loginPageDisappear();
-        //ожидание загрузки страницы
         page(MainPage.class).mainPageLoaded();
         String currentURL = webdriver().driver().url();
         assertEquals("Залогиниться не удалось", MainPage.URL, currentURL);

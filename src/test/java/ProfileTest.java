@@ -9,10 +9,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class ProfileTest extends BaseTest {
+    private User validUserData;
+
     @Before
     @DisplayName("Create random user, login and navigate to profile")
     public void setUp() {
-        User validUserData = User.getRandomUserValidData();
+        validUserData = User.getRandomUserValidData();
 
         open(RegistrationPage.URL, RegistrationPage.class)
                 .fillNameInput(validUserData.getName())
@@ -57,7 +59,7 @@ public class ProfileTest extends BaseTest {
     }
 
     @After
-    @DisplayName("Navigate to Profile and logout, clear cookies")
+    @DisplayName("Navigate to Profile and logout, delete user, clear cookies")
     public void cleanDate() {
         page(HeaderPage.class)
                 .clickHeaderAccountButton();
@@ -65,6 +67,9 @@ public class ProfileTest extends BaseTest {
                 .profilePageLoaded()
                 .clickLogoutButton()
                 .profilePageDisappear();
+        if (validUserData != null) {
+            validUserData.deleteUserUsingAPI();
+        }
         clearBrowserCookies();
         clearBrowserLocalStorage();
     }

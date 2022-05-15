@@ -13,10 +13,12 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
 
 public class LogoutTest extends BaseTest {
+    private User validUserData;
+
     @Before
     @DisplayName("Create random user, login and navigate to profile")
     public void setUp() {
-        User validUserData = User.getRandomUserValidData();
+        validUserData = User.getRandomUserValidData();
 
         open(RegistrationPage.URL, RegistrationPage.class)
                 .fillNameInput(validUserData.getName())
@@ -48,8 +50,11 @@ public class LogoutTest extends BaseTest {
     }
 
     @After
-    @DisplayName("Clear cookies")
+    @DisplayName("Delete user and clear cookies")
     public void cleanDate() {
+        if (validUserData != null) {
+            validUserData.deleteUserUsingAPI();
+        }
         clearBrowserCookies();
         clearBrowserLocalStorage();
     }

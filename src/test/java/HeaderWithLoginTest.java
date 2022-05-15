@@ -8,10 +8,12 @@ import static com.codeborne.selenide.Selenide.*;
 import static org.junit.Assert.assertEquals;
 
 public class HeaderWithLoginTest extends BaseTest {
+    private User validUserData;
+
     @Before
     @DisplayName("Create random user and login")
     public void setUp() {
-        User validUserData = User.getRandomUserValidData();
+        validUserData = User.getRandomUserValidData();
 
         open(RegistrationPage.URL, RegistrationPage.class)
                 .fillNameInput(validUserData.getName())
@@ -65,13 +67,16 @@ public class HeaderWithLoginTest extends BaseTest {
     }
 
     @After
-    @DisplayName("Navigate to Profile and logout, clear cookies")
+    @DisplayName("Navigate to Profile and logout, delete user, clear cookies")
     public void cleanDate() {
         page(HeaderPage.class).clickHeaderAccountButton();
         page(ProfilePage.class)
                 .profilePageLoaded()
                 .clickLogoutButton()
                 .profilePageDisappear();
+        if (validUserData != null) {
+            validUserData.deleteUserUsingAPI();
+        }
         clearBrowserCookies();
         clearBrowserLocalStorage();
     }
