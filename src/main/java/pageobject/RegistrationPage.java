@@ -1,12 +1,13 @@
 package pageobject;
 
 import com.codeborne.selenide.SelenideElement;
+import io.qameta.allure.Step;
 import org.openqa.selenium.support.FindBy;
 import org.openqa.selenium.support.How;
 
 import static com.codeborne.selenide.Condition.*;
 
-public class RegisterPage {
+public class RegistrationPage {
     public static final String URL = "https://stellarburgers.nomoreparties.site/register";
 
     //selector field name
@@ -37,37 +38,59 @@ public class RegisterPage {
     @FindBy(how = How.XPATH, using = "//p[text()='Некорректный пароль']")
     private SelenideElement incorrectPasswordErrorMessage;
 
-    public RegisterPage fillNameInput(String name) {
+    //selector login link
+    @FindBy(how = How.XPATH, using = "//a[@href='/login']")
+    private SelenideElement loginLink;
+
+    @Step("Fill value {name} in email field on Registration page")
+    public RegistrationPage fillNameInput(String name) {
         nameInput.sendKeys(name);
         return this;
     }
 
-    public RegisterPage fillEmailInput(String email) {
+    @Step("Fill value {email} in email field on Registration page")
+    public RegistrationPage fillEmailInput(String email) {
         emailInput.sendKeys(email);
         return this;
     }
 
-    public RegisterPage fillPasswordInput(String password) {
+    @Step("Fill value {password} in email field on Registration page")
+    public RegistrationPage fillPasswordInput(String password) {
         passwordInput.sendKeys(password);
         return this;
     }
 
-    public RegisterPage clickRegisterButton() {
+    @Step("Click registration button on Registration page")
+    public RegistrationPage clickRegistrationButton() {
         registerButton.shouldBe(visible).click();
         return this;
     }
 
+    @Step("Click login link on Registration page")
+    public RegistrationPage clickLoginLink() {
+        loginLink.shouldBe(visible).click();
+        return this;
+    }
+
+    @Step("Get displayed the error message UserAlreadyExist")
     public boolean isUserAlreadyExistErrorMessageDisplayed() {
         return userAlreadyExistErrorMessage.should(exist).isDisplayed();
     }
 
+    @Step("Get displayed the error message IncorrectPassword")
     public boolean isIncorrectPasswordErrorMessageDisplayed() {
         return incorrectPasswordErrorMessage.should(exist).isDisplayed();
     }
 
-    //для ожидание перехода со страницы
-    public RegisterPage registrationHeaderDisappear() {
+    @Step("Wait till Registration page is left")
+    public RegistrationPage registrationPageDisappear() {
         registrationHeader.should(disappear);
+        return this;
+    }
+
+    @Step("Wait till Registration page is loaded")
+    public RegistrationPage registrationPageLoaded() {
+        registrationHeader.shouldBe(visible);
         return this;
     }
 }

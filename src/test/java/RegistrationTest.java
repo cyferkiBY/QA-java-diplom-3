@@ -1,113 +1,107 @@
-import com.github.javafaker.Faker;
+import io.qameta.allure.junit4.DisplayName;
 import org.junit.Test;
 import pageobject.LoginPage;
-import pageobject.RegisterPage;
-
-import java.util.Locale;
+import pageobject.RegistrationPage;
 
 import static com.codeborne.selenide.Selenide.*;
-import static org.junit.Assert.*;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-public class RegisterTest extends BaseTest{
-    private final static String EXPECTED_URL = LoginPage.URL;
-    private final Faker fakerRu = new Faker(new Locale("ru-RU"));
-    private final Faker fakerEn = new Faker(new Locale("en-GB"));
-
+public class RegistrationTest extends BaseTest {
     @Test
-    public void checkNewUserRegistrationWithValidData() {
-        int minSizePassword = 6;
-        int maxSizePassword = 20;
-
-        open(RegisterPage.URL, RegisterPage.class)
-                .fillNameInput(fakerRu.name().fullName())
-                .fillEmailInput(fakerEn.internet().emailAddress())
-                .fillPasswordInput(fakerEn.internet().password(minSizePassword, maxSizePassword))
-                .clickRegisterButton()
-                .registrationHeaderDisappear();
+    @DisplayName("Check new user is registered with valid date")
+    public void checkNewUserIsRegisteredWithValidData() {
+        open(RegistrationPage.URL, RegistrationPage.class)
+                .fillNameInput(User.getRandomValidName())
+                .fillEmailInput(User.getRandomValidEmail())
+                .fillPasswordInput(User.getRandomValidPassword())
+                .clickRegistrationButton()
+                .registrationPageDisappear();
 
         String currentURL = webdriver().driver().url();
-        assertEquals(EXPECTED_URL, currentURL);
+        assertEquals(LoginPage.URL, currentURL);
     }
 
     @Test
+    @DisplayName("Check new user is not registered with repeated email")
     public void checkUserIsNotRegisteredWithRepeatedEmail() {
-        int minSizePassword = 6;
-        int maxSizePassword = 20;
+        String validEmail = User.getRandomValidEmail();
 
-        String emailAddress = fakerEn.internet().emailAddress();
-        open(RegisterPage.URL, RegisterPage.class)
-                .fillNameInput(fakerRu.name().fullName())
-                .fillEmailInput(emailAddress)
-                .fillPasswordInput(fakerEn.internet().password(minSizePassword,maxSizePassword))
-                .clickRegisterButton();
+        open(RegistrationPage.URL, RegistrationPage.class)
+                .fillNameInput(User.getRandomValidName())
+                .fillEmailInput(validEmail)
+                .fillPasswordInput(User.getRandomValidPassword())
+                .clickRegistrationButton();
 
         boolean isUserAlreadyExistErrorMessageDisplayed =
-                open(RegisterPage.URL, RegisterPage.class)
-                .fillNameInput(fakerRu.name().fullName())
-                .fillEmailInput(emailAddress)
-                .fillPasswordInput(fakerEn.internet().password(minSizePassword,maxSizePassword))
-                .clickRegisterButton()
-                .isUserAlreadyExistErrorMessageDisplayed();
+                open(RegistrationPage.URL, RegistrationPage.class)
+                        .fillNameInput(User.getRandomValidName())
+                        .fillEmailInput(validEmail)
+                        .fillPasswordInput(User.getRandomValidPassword())
+                        .clickRegistrationButton()
+                        .isUserAlreadyExistErrorMessageDisplayed();
 
         assertTrue("Не отобразилось сообщение об ошибке", isUserAlreadyExistErrorMessageDisplayed);
     }
 
     @Test
-    public void checkNewUserNotRegistrationWithoutEmail() {
-        int minSizePassword = 6;
-        int maxSizePassword = 20;
-
-        open(RegisterPage.URL, RegisterPage.class)
-                .fillNameInput(fakerRu.name().fullName())
+    @DisplayName("Check new user is not registered without email")
+    public void checkNewUserIsNotRegisteredWithoutEmail() {
+        open(RegistrationPage.URL, RegistrationPage.class)
+                .fillNameInput(User.getRandomValidName())
                 .fillEmailInput("")
-                .fillPasswordInput(fakerEn.internet().password(minSizePassword,maxSizePassword))
-                .clickRegisterButton();
+                .fillPasswordInput(User.getRandomValidPassword())
+                .clickRegistrationButton();
+        //Тут без sleep не обойтись, иначе словим ложно положительные срабатывания.
+        //Явными ожиданиями не обойтись, т.к. мы должны ожидать того что останемся на странице.
+        //При этом, возможно, что отслеживание того, что есть элемент на странице,
+        //при помощи shouldBe (и соответсвенно проверка текущего URL) сработает раньше,
+        //чем ошибочный переход  на следующий страницу.
+        //Поэтому здесь и в аналогичных случаях использую sleep.
         sleep(1000);
 
         String currentURL = webdriver().driver().url();
-        assertEquals(RegisterPage.URL, currentURL);
+        assertEquals(RegistrationPage.URL, currentURL);
     }
 
     @Test
-    public void checkNewUserNotRegistrationWithoutName() {
-        int minSizePassword = 6;
-        int maxSizePassword = 20;
-
-        open(RegisterPage.URL, RegisterPage.class)
+    @DisplayName("Check new user is not registered without name")
+    public void checkNewUserIsNotRegisteredWithoutName() {
+        open(RegistrationPage.URL, RegistrationPage.class)
                 .fillNameInput("")
-                .fillEmailInput(fakerEn.internet().emailAddress())
-                .fillPasswordInput(fakerEn.internet().password(minSizePassword,maxSizePassword))
-                .clickRegisterButton();
+                .fillEmailInput(User.getRandomValidEmail())
+                .fillPasswordInput(User.getRandomValidPassword())
+                .clickRegistrationButton();
         sleep(1000);
 
         String currentURL = webdriver().driver().url();
-        assertEquals(RegisterPage.URL, currentURL);
+        assertEquals(RegistrationPage.URL, currentURL);
     }
 
     @Test
-    public void checkNewUserNotRegistrationWithoutPassword() {
-        open(RegisterPage.URL, RegisterPage.class)
-                .fillNameInput(fakerRu.name().fullName())
-                .fillEmailInput(fakerEn.internet().emailAddress())
+    @DisplayName("Check new user is not registered without password")
+    public void checkNewUserIsNotRegisteredWithoutPassword() {
+        open(RegistrationPage.URL, RegistrationPage.class)
+                .fillNameInput(User.getRandomValidName())
+                .fillEmailInput(User.getRandomValidEmail())
                 .fillPasswordInput("")
-                .clickRegisterButton();
+                .clickRegistrationButton();
         sleep(1000);
 
         String currentURL = webdriver().driver().url();
-        assertEquals(RegisterPage.URL, currentURL);
+        assertEquals(RegistrationPage.URL, currentURL);
     }
 
     @Test
-    public void checkNewUserNotRegistrationWithTooShortPassword() {
-        int minSizePassword = 1;
-        int maxSizePassword = 6;
-
-        boolean isIncorrectPasswordErrorMessageDisplayed = open(RegisterPage.URL, RegisterPage.class)
-                .fillNameInput(fakerRu.name().fullName())
-                .fillEmailInput(fakerEn.internet().emailAddress())
-                .fillPasswordInput(fakerEn.internet().password(minSizePassword,maxSizePassword))
-                .clickRegisterButton()
-                .isIncorrectPasswordErrorMessageDisplayed();
+    @DisplayName("Check new user is not registered with too short password")
+    public void checkNewUserIsNotRegisteredWithTooShortPassword() {
+        boolean isIncorrectPasswordErrorMessageDisplayed =
+                open(RegistrationPage.URL, RegistrationPage.class)
+                        .fillNameInput(User.getRandomValidName())
+                        .fillEmailInput(User.getRandomValidEmail())
+                        .fillPasswordInput(User.getRandomTooShotPassword())
+                        .clickRegistrationButton()
+                        .isIncorrectPasswordErrorMessageDisplayed();
 
         assertTrue("Не отобразилось сообщение об ошибке", isIncorrectPasswordErrorMessageDisplayed);
     }
