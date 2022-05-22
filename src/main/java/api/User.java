@@ -1,3 +1,5 @@
+package api;
+
 import com.github.javafaker.Faker;
 import io.qameta.allure.Step;
 import io.restassured.builder.RequestSpecBuilder;
