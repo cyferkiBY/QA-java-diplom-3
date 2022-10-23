@@ -72,8 +72,8 @@ public class LoginTest extends BaseTest {
                 .fillEmailInput(validUserData.getEmail())
                 .fillPasswordInput(validUserData.getPassword())
                 .clickLoginButton()
-                .loginPageDisappear();
-        page(MainPage.class).mainPageLoaded();
+                .loginPageDisappear()
+                .mainPageLoaded();
         String currentURL = webdriver().driver().url();
         assertEquals("Залогиниться не удалось", MainPage.URL, currentURL);
 

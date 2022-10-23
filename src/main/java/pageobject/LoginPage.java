@@ -7,6 +7,7 @@ import org.openqa.selenium.support.How;
 
 import static com.codeborne.selenide.Condition.disappear;
 import static com.codeborne.selenide.Condition.visible;
+import static com.codeborne.selenide.Selenide.page;
 
 public class LoginPage {
     public static final String URL = "https://stellarburgers.nomoreparties.site/login";
@@ -50,9 +51,9 @@ public class LoginPage {
     }
 
     @Step("Wait till Login page is left")
-    public LoginPage loginPageDisappear() {
+    public MainPage loginPageDisappear() {
         loginHeader.should(disappear);
-        return this;
+        return page(MainPage.class);
     }
 
     @Step("Wait till Login page is loaded")
